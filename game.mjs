@@ -119,6 +119,7 @@ async function playGame() {
         clearScreen();
         showGameBoardWithCurrentState();
         showHUD();
+        takenPosition.clear();
         let move = await getGameMoveFromtCurrentPlayer();
         updateGameBoardState(move);
         outcome = evaluateGameState();
