@@ -2,7 +2,7 @@ import { print, askQuestion } from "./io.mjs"
 import { debug, DEBUG_LEVELS } from "./debug.mjs";
 import { ANSI } from "./ansi.mjs";
 import DICTIONARY from "./language.mjs";
-import showSplashScreen from "./splash.mjs";
+import showColorizedSplashScreen from "./splash.mjs";
 
 const GAME_BOARD_SIZE = 3;
 const PLAYER_1 = 1;
@@ -50,8 +50,8 @@ let currentPlayer;
 
 
 clearScreen();
-showSplashScreen();
-setTimeout(start, 500); // This waites 2.5seconds before calling the function. i.e. we get to see the splash screen for 2.5 seconds before the menue takes over. 
+showColorizedSplashScreen();
+setTimeout(start, 4800); // This waites 2.5seconds before calling the function. i.e. we get to see the splash screen for 2.5 seconds before the menue takes over. 
 
 
 
@@ -101,7 +101,7 @@ async function showMenu() {
         print(MESSAGES.EXIT_GAME_MSG);
 
         // Wait for the choice.
-        choice = await askQuestion(MESSAGES.PLAYER_INPUT);
+        choice = await askQuestion(GAME_OUTPUT.PLAYER_INPUT);
 
         // Check to see if the choice is valid.
         if ([MENU_CHOICES.MENU_CHOICE_START_GAME, MENU_CHOICES.MENU_CHOICE_SHOW_SETTINGS, MENU_CHOICES.MENU_CHOICE_EXIT_GAME].includes(Number(choice))) {
@@ -201,10 +201,11 @@ function evaluateGameState() {
             isDraw = false;
         }
     }
-    if (Math.abs(sum) == 3) {
-        state = sum;
-    }
-    sum = 0;
+         if (Math.abs(sum) == 3) {
+            state = sum;
+        }
+
+        sum = 0;
 
     for (let i = 0; i < GAME_BOARD_SIZE; i++) {
         sum += gameboard[i][GAME_BOARD_SIZE - 1 - i];
@@ -212,13 +213,13 @@ function evaluateGameState() {
             isDraw = false;
         }
     }
-    if (Math.abs(sum) == 3) {
-        state = sum;
-    }
+        if (Math.abs(sum) == 3) {
+         state = sum;
+        }
 
-    if (isDraw && state === 0) {
-        return -2;
-    }
+        if (isDraw && state === 0) {
+            return -2;
+        }
 
     let draw = -2;
     let winner = state / 3;
