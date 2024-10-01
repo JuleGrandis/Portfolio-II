@@ -47,11 +47,12 @@ const MESSAGES = {
 let language = DICTIONARY.en;
 let gameboard;
 let currentPlayer;
+let takenPosition = new Set();
 
 
 clearScreen();
 showColorizedSplashScreen();
-setTimeout(start, 4800); // This waites 2.5seconds before calling the function. i.e. we get to see the splash screen for 2.5 seconds before the menue takes over. 
+setTimeout(start, 4800); 
 
 
 
@@ -241,8 +242,6 @@ async function getGameMoveFromtCurrentPlayer() {
 
     return position
 }
-
-let takenPosition = new Set();
 
 function isValidPositionOnBoard(position) {
 
