@@ -1,7 +1,7 @@
 import { print, askQuestion } from "./io.mjs"
 import { debug, DEBUG_LEVELS } from "./debug.mjs";
 import { ANSI } from "./ansi.mjs";
-import DICTIONARY from "./language.mjs";
+import { DICTIONARY, changeLanguage, getTranslation} from "./language.mjs";
 
 
 
@@ -63,7 +63,3 @@ const MENU_ACTIONS = [
   function exitGame() {
     console.log("Exiting game...");
   }
-
-  function print(text) {
-    console.log(text);
-}

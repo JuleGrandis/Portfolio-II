@@ -1,7 +1,7 @@
 import { print, askQuestion } from "./io.mjs"
 import { debug, DEBUG_LEVELS } from "./debug.mjs";
 import { ANSI } from "./ansi.mjs";
-import DICTIONARY from "./language.mjs";
+import { DICTIONARY } from "./language.mjs";
 import showColorizedSplashScreen from "./splash.mjs";
 
 const GAME_BOARD_SIZE = 3;
@@ -230,7 +230,9 @@ function evaluateGameState() {
 function updateGameBoardState(move) {
     const ROW_ID = 0;
     const COLUMN_ID = 1;
-    gameboard[move[ROW_ID]][move[COLUMN_ID]] = currentPlayer;
+    let row = move[ROW_ID] - 1;
+    let col = move[COLUMN_ID] - 1;
+    gameboard[row][col] = currentPlayer;
 }
 
 async function getGameMoveFromtCurrentPlayer() {
@@ -251,7 +253,9 @@ function isValidPositionOnBoard(position) {
         print(ANSI.RESET);
         return false;
     }
-  
+
+    let row = position[0] - 1;
+    let col = position[1] - 1;
 
     let isValidInput = true;
     if (position[0] * 1 != position[0] && position[1] * 1 != position[1]) {
@@ -272,7 +276,7 @@ function isValidPositionOnBoard(position) {
     }
 
     if (isValidInput) {
-        takenPosition.add(position.join(','));
+        takenPosition.add([row, col].join(','));
     }
     
     return isValidInput;
