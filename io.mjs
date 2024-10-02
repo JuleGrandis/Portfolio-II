@@ -1,3 +1,5 @@
+import { ANSI } from "./ansi.mjs";
+
 
 import * as readlinePromises from 'node:readline/promises';
 
@@ -11,5 +13,9 @@ function print(text) {
     console.log(text);
 }
 
+function clearScreen() {
+    print(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME, ANSI.RESET);
+}
 
-export { print, askQuestion };
+
+export { print, askQuestion, clearScreen };

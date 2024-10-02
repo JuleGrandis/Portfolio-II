@@ -1,4 +1,4 @@
-import { print, askQuestion } from "./io.mjs"
+import { print, askQuestion, clearScreen } from "./io.mjs"
 import { debug, DEBUG_LEVELS } from "./debug.mjs";
 import { ANSI } from "./ansi.mjs";
 import DICTIONARY from "./language.mjs";
@@ -59,17 +59,12 @@ async function start() {
 }
 
 async function runGame(gameMode) {
-
     let isPlaying = true;
 
     while (isPlaying) {  
         initializeGame();
         
-        if (gameMode === MENU_CHOICES.MENU_CHOICE_START_GAME_PVP) {
-            isPlaying = await playGamePvp();
-        } else if (gameMode === MENU_CHOICES.MENU_CHOICE_START_GAME_PVC) {
-            isPlaying = await playGamePvc();
-        }
+        isPlaying = await playGame(gameMode);
     }
 }
 
@@ -122,46 +117,37 @@ async function showSettings() {
     return (choice);
 }
 
-async function playGamePvp() {
+async function playGame(gameMode) {
     let outcome;
+
+    const isPvp = gameMode === MENU_CHOICES.MENU_CHOICE_START_GAME_PVP;
+
     do {
         clearScreen();
         showGameBoardWithCurrentState();
-        showHUDPvp();
-        let move = await getGameMoveFromCurrentPlayer();
-        updateGameBoardState(move);
-        outcome = evaluateGameState();
-        changeCurrentPlayer();
-    } while (outcome === 0); 
 
-    showGameSummary(outcome);
-
-    return await askWantToPlayAgain();
-}
-
-async function playGamePvc() {
-
-    let outcome;
-    do {
-        clearScreen();
-        showGameBoardWithCurrentState();
-        showHUDPvc();
+        if (isPvp) {
+            showHUDPvp();
+        } else {
+            showHUDPvc();
+        }
 
         let move;
-        if (currentPlayer === PLAYER_1) {
+        if (isPvp || currentPlayer === PLAYER_1) {
             move = await getGameMoveFromCurrentPlayer();
         } else {
             await new Promise(resolve => setTimeout(resolve, 1000));
             move = getCpuMove();
-            print(language.CPU_MOVE_MSG + (move[0] + 1) + ", " + (move[1] + 1));
+            print((move[0] + 1) + ", " + (move[1] + 1));
         }
 
         updateGameBoardState(move);
         outcome = evaluateGameState();
         changeCurrentPlayer();
-    } while (outcome === 0); 
 
-    showGameSummary(outcome);
+    } while (outcome === 0);
+
+    showGameSummary();
 
     return await askWantToPlayAgain();
 }
@@ -327,7 +313,7 @@ function showHUDPvp() {
     if (PLAYER_2 == currentPlayer) {
         playerDescription = language.PLAYER_2_MSG;
     }
-    print(language.PLAYER_MSG + playerDescription + language.PLAYER_TURN);
+    print(ANSI.BOLD + ANSI.COLOR.BLUE + language.PLAYER_MSG + playerDescription + language.PLAYER_TURN + ANSI.RESET);
 }
 
 function showHUDPvc() {
@@ -336,14 +322,14 @@ function showHUDPvc() {
     if (PLAYER_2 == currentPlayer) {
         playerDescription = language.CPU_MOVE_MSG;
     }
-    print(language.PLAYER_MSG + playerDescription + language.PLAYER_TURN);
+    print(ANSI.BOLD + ANSI.COLOR.BLUE + language.PLAYER_MSG + playerDescription + language.PLAYER_TURN + ANSI.RESET);
 }
 
 function showGameBoardWithCurrentState() {
     let board = '';
 
-    board += '    1   2   3\n';
-    board += '  -------------\n'
+    board += ANSI.BOLD + '    1   2   3\n';
+    board += '  -------------\n' + ANSI.RESET;
 
     for (let currentRow = 0; currentRow < GAME_BOARD_SIZE; currentRow++) {
         let rowOutput = "";
@@ -353,15 +339,15 @@ function showGameBoardWithCurrentState() {
         for (let currentCol = 0; currentCol < GAME_BOARD_SIZE; currentCol++) {
             let cell = gameboard[currentRow][currentCol];
 
-            rowOutput += '| ';
-            rowOutput += cell === 0 ? "_ " : cell > 0 ? ANSI.COLOR.RED + "X " + ANSI.RESET : ANSI.COLOR.GREEN + "O " + ANSI.RESET;
+            rowOutput += ANSI.BOLD + '| ' + ANSI.RESET;
+            rowOutput += cell === 0 ? ANSI.BOLD + "_ " : cell > 0 ? ANSI.COLOR.RED + "X " + ANSI.RESET : ANSI.COLOR.GREEN + "O " + ANSI.RESET;
     }
 
-        rowOutput += '| ';
+        rowOutput += ANSI.BOLD + '| ';
         board += rowOutput + '\n';
 
         if (currentRow < GAME_BOARD_SIZE) {
-        board += '  -------------\n';
+        board += '  -------------\n' + ANSI.RESET;
         }
     }
     print(board);
@@ -388,10 +374,5 @@ function createGameBoard() {
     return newBoard;
 
 }
-
-function clearScreen() {
-    print(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME, ANSI.RESET);
-}
-
 
 //#endregion
