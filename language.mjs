@@ -1,8 +1,8 @@
-import { ANSI } from "./ansi.mjs";
-
 const DICTIONARY = {
 
     en: {
+        MENU_MSG: "MENU",
+        SETTING_MENU_MSG: "SETTINGS",
         PLAY_AGAIN_QUESTION: "Play again (YES/no)? ",
         CONFIRM: "y",
         POSITION_TAKEN: "This position is taken.",
@@ -17,15 +17,23 @@ const DICTIONARY = {
         DRAW_MSG: "It's a Draw!",
         PLAYER_MSG: "Player ",
         PLAYER_TURN: " it is your turn",
-        MENU_MSG: "MENU",
         PLAY_GAME_PVP_MSG: "1. Play Game (PvP)",
         PLAY_GAME_PVC_MSG: "1. Play Game (PvC)",
         SETTINGS_MSG: "2. Settings",
         EXIT_GAME_MSG: "3. Exit Game",
         PLAYER_VS_MSG: "Player vs",
-        CREDITS_MSG: "Credits"
+        CREDITS_MSG: "Credits",
+        YES_MSG: "1: Yes",
+        NO_MSG: "2: No",
+        SETTINGS_NO_TEXT: "1. Norwegian",
+        SETTINGS_EN_TEXT: "2. English",
+        SETTINGS_BACK: "3. Back",
+        CPU_MOVE_MSG: "CPU is making its move..."
+    
     },
     no: {
+        MENU_MSG: "MENY",
+        SETTING_MENU_MSG: "INSTILLINGER",
         PLAY_AGAIN_QUESTION: "Spille en gang til (Ja/nei)? ",
         CONFIRM: "j",
         POSITION_TAKEN: "Denne posisjonen er tatt.",
@@ -40,35 +48,19 @@ const DICTIONARY = {
         DRAW_MSG: "Det ble uavgjort!",
         PLAYER_MSG: "Spiller ",
         PLAYER_TURN: " det er din tur",
-        MENU_MSG: "MENY",
         PLAY_GAME_PVP_MSG: "1. Spill Spillet (PVP)",
         PLAY_GAME_PVC_MSG: "1. Spill Spillet (PvC)",
         SETTINGS_MSG: "2. Innstillinger",
         EXIT_GAME_MSG: "3. Avslutt Spillet",
         PLAYER_VS_MSG: "Spiller vs",
-        CREDITS_MSG: "Kreditter"
+        CREDITS_MSG: "Kreditter",
+        YES_MSG: "1. Ja",
+        NO_MSG: "2. Nei",
+        SETTINGS_NO_TEXT: "1. Norsk",
+        SETTINGS_EN_TEXT: "2. Engelsk",
+        SETTINGS_BACK: "3. Tilbake",
+        CPU_MOVE_MSG: "CPU plasserer et merke..."
     }
 }
 
-let currentLanguage = "en";
-
-function changeLanguage(newLanguage) {
-    if (DICTIONARY.hasOwnProperty(newLanguage)) {
-        currentLanguage = newLanguage;
-    } else {
-        print("Invalid Language: ", newLanguage);
-    }
-}
-
-function getTranslation(key) {
-    return DICTIONARY[currentLanguage][key];
-}
-
-function print(text) {
-    console.log(text);
-}
-
-changeLanguage();
-getTranslation();
-
-export {DICTIONARY, changeLanguage, getTranslation};
+export default DICTIONARY;
