@@ -280,23 +280,31 @@ function showHUD() {
 }
 
 function showGameBoardWithCurrentState() {
+    let board = '';
+
+    board += '    1   2   3\n';
+    board += '  -------------\n'
+
     for (let currentRow = 0; currentRow < GAME_BOARD_SIZE; currentRow++) {
         let rowOutput = "";
+
+        board += (currentRow + 1) + ' ';
+
         for (let currentCol = 0; currentCol < GAME_BOARD_SIZE; currentCol++) {
             let cell = gameboard[currentRow][currentCol];
-            rowOutput += cell === 0 ? "_ " : cell > 0 ? "X " : "O ";
-           /* if (cell == 0) {
-                rowOutput += "_ ";
-            }
-            else if (cell > 0) {
-                rowOutput += "X ";
-            } else {
-                rowOutput += "O  ";
-            }*/
-        }
 
-        print(rowOutput);
+            rowOutput += '| ';
+            rowOutput += cell === 0 ? "_ " : cell > 0 ? ANSI.COLOR.RED + "X " + ANSI.RESET : ANSI.COLOR.GREEN + "O " + ANSI.RESET;
     }
+
+        rowOutput += '| ';
+        board += rowOutput + '\n';
+
+        if (currentRow < GAME_BOARD_SIZE) {
+        board += '  -------------\n';
+        }
+    }
+    print(board);
 }
 
 function initializeGame() {
