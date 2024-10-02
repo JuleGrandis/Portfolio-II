@@ -74,7 +74,7 @@ async function start() {
             process.exit();
         }
 
-    } while (true)
+    } while (true);
 
 }
 
@@ -110,7 +110,7 @@ async function showMenu() {
         }
     }
 
-    return choice;
+    return Number(choice);
 }
 
 async function playGame() {
@@ -120,12 +120,11 @@ async function playGame() {
         clearScreen();
         showGameBoardWithCurrentState();
         showHUD();
-        takenPosition.clear();
         let move = await getGameMoveFromtCurrentPlayer();
         updateGameBoardState(move);
         outcome = evaluateGameState();
         changeCurrentPlayer();
-    } while (outcome == 0)
+    } while (outcome === 0); 
 
     showGameSummary(outcome);
 
@@ -145,15 +144,12 @@ function showGameSummary(outcome) {
     clearScreen();
     if (outcome === -2) {
         showGameBoardWithCurrentState();
-        print(ANSI.COLOR.BLUE + MESSAGES.DRAW_MSG);
-        print(ANSI.RESET);
+        print(ANSI.COLOR.BLUE + MESSAGES.DRAW_MSG + ANSI.RESET);
     } else {
-    let winningPlayer = (outcome > 0) ? 1 : 2;
-    print(ANSI.COLOR.GREEN + MESSAGES.WINNER_MSG + winningPlayer);
-    print(ANSI.RESET);
-    showGameBoardWithCurrentState();
-    print(ANSI.COLOR.RED + MESSAGES.GAME_OVER_MSG);
-    print(ANSI.RESET);
+        let winningPlayer = (outcome > 0) ? 1 : 2;
+        print(ANSI.COLOR.GREEN + MESSAGES.WINNER_MSG + winningPlayer + ANSI.RESET);
+        showGameBoardWithCurrentState();
+        print(ANSI.COLOR.RED + MESSAGES.GAME_OVER_MSG + ANSI.RESET);
     }
 }
 
@@ -230,53 +226,46 @@ function evaluateGameState() {
 function updateGameBoardState(move) {
     const ROW_ID = 0;
     const COLUMN_ID = 1;
-    let row = move[ROW_ID] - 1;
-    let col = move[COLUMN_ID] - 1;
-    gameboard[row][col] = currentPlayer;
+    const [row, col] = move;
+    gameboard[move[ROW_ID]][move[COLUMN_ID]] = currentPlayer;
 }
 
-async function getGameMoveFromtCurrentPlayer() {
-    let position = null;
+async function getGameMoveFromtCurrentPlayer() { //KEEP IN MIND IT CHANGED
+    let positions = null;
     do {
         let rawInput = await askQuestion(MESSAGES.PLACE_MARK);
-        position = rawInput.split(" ");
-    } while (isValidPositionOnBoard(position) == false)
-
-    return position
+        positions = rawInput.split(" ").filter(Boolean);
+        positions[0]--;
+        positions[1]--;
+    } while (!isValidPositionOnBoard(positions))
+    return positions;
 }
 
-function isValidPositionOnBoard(position) {
+function isValidPositionOnBoard(position) { // FIX SO IT GOES THROUGH CHECK
 
     if (position.length < 2) {
         // We where not given two numbers or more.
-        print(ANSI.COLOR.YELLOW + MESSAGES.INPUT_TWO_VALUES);
-        print(ANSI.RESET);
+        print(ANSI.COLOR.YELLOW + MESSAGES.INPUT_TWO_VALUES + ANSI.RESET);
         return false;
     }
 
-    let row = position[0] - 1;
-    let col = position[1] - 1;
-
     let isValidInput = true;
-    if (position[0] * 1 != position[0] && position[1] * 1 != position[1]) {
+    if (isNaN(position[0]) || isNaN(position[1])) {
         // Not Numbers
         isValidInput = false;
-        print(ANSI.COLOR.YELLOW + MESSAGES.INVALID_INPUT)
-        print(ANSI.RESET);
-    } else if (position[0] > GAME_BOARD_SIZE && position[1] > GAME_BOARD_SIZE) {
+        print(ANSI.COLOR.YELLOW + MESSAGES.INVALID_INPUT + ANSI.RESET)
+    } else if (position[0] >= GAME_BOARD_SIZE || position[1] >= GAME_BOARD_SIZE) {
         // Not on board
         isValidInput = false;
-        print(ANSI.COLOR.YELLOW + MESSAGES.NOT_ON_BOARD)
-        print(ANSI.RESET);
+        print(ANSI.COLOR.YELLOW + MESSAGES.NOT_ON_BOARD + ANSI.RESET)
     } else if (takenPosition.has(position.join(','))) {
         // Position taken.
         isValidInput = false;
-        print(ANSI.COLOR.YELLOW + MESSAGES.POSITION_TAKEN)
-        print(ANSI.RESET);
+        print(ANSI.COLOR.YELLOW + MESSAGES.POSITION_TAKEN + ANSI.RESET);
     }
 
     if (isValidInput) {
-        takenPosition.add([row, col].join(','));
+        takenPosition.add(position.join(','));
     }
     
     return isValidInput;
@@ -295,14 +284,15 @@ function showGameBoardWithCurrentState() {
         let rowOutput = "";
         for (let currentCol = 0; currentCol < GAME_BOARD_SIZE; currentCol++) {
             let cell = gameboard[currentRow][currentCol];
-            if (cell == 0) {
+            rowOutput += cell === 0 ? "_ " : cell > 0 ? "X " : "O ";
+           /* if (cell == 0) {
                 rowOutput += "_ ";
             }
             else if (cell > 0) {
                 rowOutput += "X ";
             } else {
                 rowOutput += "O  ";
-            }
+            }*/
         }
 
         print(rowOutput);
@@ -312,6 +302,7 @@ function showGameBoardWithCurrentState() {
 function initializeGame() {
     gameboard = createGameBoard();
     currentPlayer = PLAYER_1;
+    takenPosition.clear();
 }
 
 function createGameBoard() {

@@ -2,13 +2,14 @@ import { clearInterval } from "timers";
 import { ANSI } from "./ansi.mjs";
 
 const ART = `
- ______  ____   __      ______   ____    __      ______   ___     ___
-|      ||    | /  ]    |      | /    |  /  ]    |      | /   \\   /  _]
-|      | |  | /  /     |      ||  o  | /  /     |      ||     | /  [_
-|_|  |_| |  |/  /      |_|  |_||     |/  /      |_|  |_||  O  ||    _]
-  |  |   |  /   \\_       |  |  |  _  /   \\_       |  |  |     ||   [_
-  |  |   |  \\     |      |  |  |  |  \\     |      |  |  |     ||     |
-  |__|  |____\\____|      |__|  |__|__|\\____|      |__|   \\___/ |_____|
+  _______ _____ _____    _______       _  __  _______ ____  ______ 
+ |__   __|_   _/ ____|  |__   __|/\\   | |/ / |__   __/ __ \\|  ____|
+    | |    | || |          | |  /  \\  | ' /     | | | |  | | |__   
+    | |    | || |          | | / /\\ \\ |  <      | | | |  | |  __|  
+    | |   _| || |____      | |/ ____ \\| . \\     | | | |__| | |____ 
+    |_|  |_____\\_____|     |_/_/    \\_\\_|\\_\\    |_|  \\____/|______|
+                                                                  
+                                                                  
 
 `
 
@@ -26,7 +27,7 @@ function showColorizedSplashScreen() {
     console.log(ANSI.CLEAR_SCREEN);
     const colorCode = COLORS[colorIndex % COLORS.length];
 
-    console.log(colorCode, ART,  ANSI.RESET);
+    console.log(ANSI.BOLD, colorCode, ART,  ANSI.RESET);
     
     colorIndex++;
     elapsedTime += intervalDuration;

@@ -15,6 +15,7 @@ const GREEN = '\x1b[32m';
 const RED = '\x1b[31m';
 const YELLOW = '\x1b[33m';
 const BLUE = '\x1b[34m';
+const BOLD = '\u001b[1m';
 
 const ANSI = {
     ESC,
@@ -35,7 +36,8 @@ const ANSI = {
         RED,
         YELLOW,
         BLUE
-    }
+    },
+    BOLD
 }
 
 export { ANSI }
