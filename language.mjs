@@ -18,17 +18,13 @@ const DICTIONARY = {
         PLAYER_MSG: "Player ",
         PLAYER_TURN: " it is your turn",
         PLAY_GAME_PVP_MSG: "1. Play Game (PvP)",
-        PLAY_GAME_PVC_MSG: "1. Play Game (PvC)",
-        SETTINGS_MSG: "2. Settings",
-        EXIT_GAME_MSG: "3. Exit Game",
-        PLAYER_VS_MSG: "Player vs",
-        CREDITS_MSG: "Credits",
-        YES_MSG: "1: Yes",
-        NO_MSG: "2: No",
+        PLAY_GAME_PVC_MSG: "2. Play Game (PvC)",
+        SETTINGS_MSG: "3. Settings",
+        EXIT_GAME_MSG: "4. Exit Game",
         SETTINGS_NO_TEXT: "1. Norwegian",
         SETTINGS_EN_TEXT: "2. English",
         SETTINGS_BACK: "3. Back",
-        CPU_MOVE_MSG: "CPU is making its move..."
+        CPU_MOVE_MSG: "CPU "
     
     },
     no: {
@@ -49,17 +45,13 @@ const DICTIONARY = {
         PLAYER_MSG: "Spiller ",
         PLAYER_TURN: " det er din tur",
         PLAY_GAME_PVP_MSG: "1. Spill Spillet (PVP)",
-        PLAY_GAME_PVC_MSG: "1. Spill Spillet (PvC)",
-        SETTINGS_MSG: "2. Innstillinger",
-        EXIT_GAME_MSG: "3. Avslutt Spillet",
-        PLAYER_VS_MSG: "Spiller vs",
-        CREDITS_MSG: "Kreditter",
-        YES_MSG: "1. Ja",
-        NO_MSG: "2. Nei",
+        PLAY_GAME_PVC_MSG: "2. Spill Spillet (PvC)",
+        SETTINGS_MSG: "3. Innstillinger",
+        EXIT_GAME_MSG: "4. Avslutt Spillet",
         SETTINGS_NO_TEXT: "1. Norsk",
         SETTINGS_EN_TEXT: "2. Engelsk",
         SETTINGS_BACK: "3. Tilbake",
-        CPU_MOVE_MSG: "CPU plasserer et merke..."
+        CPU_MOVE_MSG: "CPU "
     }
 }
 

@@ -8,7 +8,6 @@ const GAME_BOARD_SIZE = 3;
 const PLAYER_1 = 1;
 const PLAYER_2 = -1;
 
-// These are the valid choices for the menu.
 const MENU_CHOICES = {
     MENU_CHOICE_START_GAME_PVP: 1,
     MENU_CHOICE_START_GAME_PVC: 2,
@@ -39,14 +38,15 @@ setTimeout(start, 4800);
 //#region game functions -----------------------------
 
 async function start() {
-
+    let chosenAction = NO_CHOICE;
+   
     do {
-
-        let chosenAction = NO_CHOICE;
         chosenAction = await showMainMenu();
 
-        if (chosenAction == MENU_CHOICES.MENU_CHOICE_START_GAME) {
-            await runGame();
+        if (chosenAction == MENU_CHOICES.MENU_CHOICE_START_GAME_PVP) {
+            await runGame(MENU_CHOICES.MENU_CHOICE_START_GAME_PVP);
+        } else if (chosenAction == MENU_CHOICES.MENU_CHOICE_START_GAME_PVC){
+            await runGame(MENU_CHOICES.MENU_CHOICE_START_GAME_PVC);
         } else if (chosenAction == MENU_CHOICES.MENU_CHOICE_SHOW_SETTINGS) {
             await showSettings();
         } else if (chosenAction == MENU_CHOICES.MENU_CHOICE_EXIT_GAME) {
@@ -58,23 +58,26 @@ async function start() {
 
 }
 
-async function runGame() {
+async function runGame(gameMode) {
 
     let isPlaying = true;
 
-    while (isPlaying) { // Do the following until the player dos not want to play anymore. 
-        initializeGame(); // Reset everything related to playing the game
-        isPlaying = await playGame(); // run the actual game 
+    while (isPlaying) {  
+        initializeGame();
+        
+        if (gameMode === MENU_CHOICES.MENU_CHOICE_START_GAME_PVP) {
+            isPlaying = await playGamePvp();
+        } else if (gameMode === MENU_CHOICES.MENU_CHOICE_START_GAME_PVC) {
+            isPlaying = await playGamePvc();
+        }
     }
 }
 
 async function showMainMenu() {
-
-    let choice = -1;  // This variable tracks the choice the player has made. We set it to -1 initially because that is not a valid choice.
-    let validChoice = false;    // This variable tells us if the choice the player has made is one of the valid choices. It is initially set to false because the player has made no choices.
+    let choice = -1;  
+    let validChoice = false;    
 
     while (!validChoice) {
-        // Display our menu to the player.
         clearScreen();
         print(ANSI.COLOR.YELLOW + language.MENU_MSG + ANSI.RESET);
         print(language.PLAY_GAME_PVP_MSG);
@@ -82,10 +85,8 @@ async function showMainMenu() {
         print(language.SETTINGS_MSG);
         print(language.EXIT_GAME_MSG);
 
-        // Wait for the choice.
         choice = await askQuestion("");
 
-        // Check to see if the choice is valid.
         if ([MENU_CHOICES.MENU_CHOICE_START_GAME_PVP, MENU_CHOICES.MENU_CHOICE_START_GAME_PVC, MENU_CHOICES.MENU_CHOICE_SHOW_SETTINGS, MENU_CHOICES.MENU_CHOICE_EXIT_GAME].includes(Number(choice))) {
             validChoice = true;
         }
@@ -105,7 +106,6 @@ async function showSettings() {
         print(language.SETTINGS_EN_TEXT);
         print(language.SETTINGS_BACK);
 
-
         choice = await askQuestion("");
 
         if([SETTINGS_CHOICES.SETTINGS_NO_TEXT].includes(Number(choice))) {
@@ -119,17 +119,16 @@ async function showSettings() {
         }
     }
 
-    return Number(choice);
+    return (choice);
 }
 
 async function playGamePvp() {
-    // Play game..
     let outcome;
     do {
         clearScreen();
         showGameBoardWithCurrentState();
-        showHUD();
-        let move = await getGameMoveFromtCurrentPlayer();
+        showHUDPvp();
+        let move = await getGameMoveFromCurrentPlayer();
         updateGameBoardState(move);
         outcome = evaluateGameState();
         changeCurrentPlayer();
@@ -141,23 +140,25 @@ async function playGamePvp() {
 }
 
 async function playGamePvc() {
-    // Play game..
+
     let outcome;
     do {
         clearScreen();
         showGameBoardWithCurrentState();
-        showHUD();
+        showHUDPvc();
 
         let move;
         if (currentPlayer === PLAYER_1) {
-            move = await getGameMoveFromtCurrentPlayer();
+            move = await getGameMoveFromCurrentPlayer();
         } else {
+            await new Promise(resolve => setTimeout(resolve, 1000));
             move = getCpuMove();
             print(language.CPU_MOVE_MSG + (move[0] + 1) + ", " + (move[1] + 1));
         }
+
         updateGameBoardState(move);
         outcome = evaluateGameState();
-        // ADD CPU HERE
+        changeCurrentPlayer();
     } while (outcome === 0); 
 
     showGameSummary(outcome);
@@ -279,7 +280,7 @@ function updateGameBoardState(move) {
     gameboard[move[ROW_ID]][move[COLUMN_ID]] = currentPlayer;
 }
 
-async function getGameMoveFromtCurrentPlayer() { //KEEP IN MIND IT CHANGED
+async function getGameMoveFromCurrentPlayer() { 
     let positions = null;
     do {
         let rawInput = await askQuestion(language.PLACE_MARK);
@@ -290,7 +291,7 @@ async function getGameMoveFromtCurrentPlayer() { //KEEP IN MIND IT CHANGED
     return positions;
 }
 
-function isValidPositionOnBoard(position) { // FIX SO IT GOES THROUGH CHECK
+function isValidPositionOnBoard(position) { 
 
     if (position.length < 2) {
         // We where not given two numbers or more.
@@ -320,10 +321,20 @@ function isValidPositionOnBoard(position) { // FIX SO IT GOES THROUGH CHECK
     return isValidInput;
 }
 
-function showHUD() {
+function showHUDPvp() {
+    
     let playerDescription = language.PLAYER_1_MSG;
     if (PLAYER_2 == currentPlayer) {
         playerDescription = language.PLAYER_2_MSG;
+    }
+    print(language.PLAYER_MSG + playerDescription + language.PLAYER_TURN);
+}
+
+function showHUDPvc() {
+
+    let playerDescription = language.PLAYER_1_MSG;
+    if (PLAYER_2 == currentPlayer) {
+        playerDescription = language.CPU_MOVE_MSG;
     }
     print(language.PLAYER_MSG + playerDescription + language.PLAYER_TURN);
 }
