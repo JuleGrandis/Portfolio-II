@@ -216,12 +216,10 @@ function evaluateGameState() {
                 isDraw = false;
             }
         }
-
-      
+     
         if (Math.abs(sum) == 3) {
             state = sum;
         }
-
         sum = 0;
     }
 
@@ -234,7 +232,6 @@ function evaluateGameState() {
          if (Math.abs(sum) == 3) {
             state = sum;
         }
-
         sum = 0;
 
     for (let i = 0; i < GAME_BOARD_SIZE; i++) {
@@ -267,7 +264,8 @@ async function getGameMoveFromCurrentPlayer() {
     let positions = null;
     do {
         let rawInput = await askQuestion(language.PLACE_MARK);
-        positions = rawInput.split(" ").filter(Boolean);
+        positions = rawInput.split(" ").filter(Boolean).map(Number);
+
         positions[0]--;
         positions[1]--;
     } while (!isValidPositionOnBoard(positions))
@@ -276,7 +274,7 @@ async function getGameMoveFromCurrentPlayer() {
 
 function isValidPositionOnBoard(position) { 
 
-    if (position.length < 2) {
+    if (position.length !== 2) {
         // We where not given two numbers or more.
         print(ANSI.COLOR.YELLOW + language.INPUT_TWO_VALUES + ANSI.RESET);
         return false;
@@ -287,7 +285,7 @@ function isValidPositionOnBoard(position) {
         // Not Numbers
         isValidInput = false;
         print(ANSI.COLOR.YELLOW + language.INVALID_INPUT + ANSI.RESET)
-    } else if (position[0] >= GAME_BOARD_SIZE || position[1] >= GAME_BOARD_SIZE) {
+    } else if (position[0] < 0 || position[1] < 0 || position[0] >= GAME_BOARD_SIZE || position[1] >= GAME_BOARD_SIZE) {
         // Not on board
         isValidInput = false;
         print(ANSI.COLOR.YELLOW + language.NOT_ON_BOARD + ANSI.RESET)

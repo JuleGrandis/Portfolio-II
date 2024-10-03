@@ -37,6 +37,6 @@ function showColorizedSplashScreen() {
     } 
   }, intervalDuration);
 }
-showColorizedSplashScreen();
+
 export default showColorizedSplashScreen;
 

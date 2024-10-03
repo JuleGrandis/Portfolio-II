@@ -5,3 +5,4 @@ What I did change on the first commit was:
   1. Check if slot is already taken.
   2. Remove magic strings
   3. Added Draw mechanic
+
