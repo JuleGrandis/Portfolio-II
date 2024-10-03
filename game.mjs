@@ -114,7 +114,6 @@ async function showSettings() {
         }
 }
 
-
 async function playGame(gameMode) {
     let outcome;
 
@@ -125,9 +124,9 @@ async function playGame(gameMode) {
         showGameBoardWithCurrentState();
 
         if (isPvp) {
-            showHUDPvp();
+            showHUD(true);
         } else {
-            showHUDPvc();
+            showHUD(false);
         }
 
         let move;
@@ -305,21 +304,13 @@ function isValidPositionOnBoard(position) {
     return isValidInput;
 }
 
-function showHUDPvp() {
-    
+function showHUD(isPvp) {
     let playerDescription = language.PLAYER_1_MSG;
-    if (PLAYER_2 == currentPlayer) {
-        playerDescription = language.PLAYER_2_MSG;
-    }
-    print(ANSI.BOLD + ANSI.COLOR.BLUE + language.PLAYER_MSG + playerDescription + language.PLAYER_TURN + ANSI.RESET);
-}
 
-function showHUDPvc() {
-
-    let playerDescription = language.PLAYER_1_MSG;
     if (PLAYER_2 == currentPlayer) {
-        playerDescription = language.CPU_MOVE_MSG;
+        playerDescription = isPvp ? language.PLAYER_2_MSG : language.CPU_MOVE_MSG;
     }
+
     print(ANSI.BOLD + ANSI.COLOR.BLUE + language.PLAYER_MSG + playerDescription + language.PLAYER_TURN + ANSI.RESET);
 }
 
