@@ -109,13 +109,11 @@ async function showSettings() {
         } else if ([SETTINGS_CHOICES.SETTINGS_EN_TEXT].includes(Number(choice))){
             validChoice = true;
             language = DICTIONARY.en;
-        } else {
-            await showMainMenu();
+        } else if ([SETTINGS_CHOICES.SETTINGS_BACK].includes(Number(choice))) {}
+            return;
         }
-    }
-
-    return (choice);
 }
+
 
 async function playGame(gameMode) {
     let outcome;
