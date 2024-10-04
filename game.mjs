@@ -1,5 +1,4 @@
 import { print, askQuestion, clearScreen } from "./io.mjs"
-import { debug, DEBUG_LEVELS } from "./debug.mjs";
 import { ANSI } from "./ansi.mjs";
 import DICTIONARY from "./language.mjs";
 import showColorizedSplashScreen from "./splash.mjs";
@@ -7,6 +6,7 @@ import showColorizedSplashScreen from "./splash.mjs";
 const GAME_BOARD_SIZE = 3;
 const PLAYER_1 = 1;
 const PLAYER_2 = -1;
+const SPLASH_SCREEN_DURATION = 4800;
 
 const MENU_CHOICES = {
     MENU_CHOICE_START_GAME_PVP: 1,
@@ -31,7 +31,7 @@ let takenPosition = new Set();
 
 clearScreen();
 showColorizedSplashScreen();
-setTimeout(start, 4800); 
+setTimeout(start, SPLASH_SCREEN_DURATION); 
 
 
 
@@ -109,9 +109,10 @@ async function showSettings() {
         } else if ([SETTINGS_CHOICES.SETTINGS_EN_TEXT].includes(Number(choice))){
             validChoice = true;
             language = DICTIONARY.en;
-        } else if ([SETTINGS_CHOICES.SETTINGS_BACK].includes(Number(choice))) {}
+        } else if ([SETTINGS_CHOICES.SETTINGS_BACK].includes(Number(choice))) {
             return;
         }
+    }
 }
 
 async function playGame(gameMode) {
@@ -144,7 +145,7 @@ async function playGame(gameMode) {
 
     } while (outcome === 0);
 
-    showGameSummary();
+    showGameSummary(outcome);
 
     return await askWantToPlayAgain();
 }
@@ -160,6 +161,7 @@ async function askWantToPlayAgain() {
 
 function showGameSummary(outcome) {
     clearScreen();
+
     if (outcome === -2) {
         showGameBoardWithCurrentState();
         print(ANSI.COLOR.BLUE + language.DRAW_MSG + ANSI.RESET);
@@ -191,66 +193,43 @@ function getCpuMove() {
 }
 
 function evaluateGameState() {
-    let sum = 0;
     let state = 0;
     let isDraw = true;
 
-    for (let row = 0; row < GAME_BOARD_SIZE; row++) {
-        for (let col = 0; col < GAME_BOARD_SIZE; col++) {
-            sum += gameboard[row][col];
-            if (gameboard[row][col] === 0) {
+    for (let i = 0; i < GAME_BOARD_SIZE; i++) {
+        let rowSum = 0, colSum = 0;
+
+        for (let j = 0; j < GAME_BOARD_SIZE; j++) {
+            rowSum += gameboard[i][j];
+            colSum += gameboard[j][i];
+
+            if (gameboard[i][j] === 0 || gameboard[j][i] === 0){
                 isDraw = false;
             }
         }
 
-        if (Math.abs(sum) == 3) {
-            state = sum;
-        }
-        sum = 0;
+        if (Math.abs(rowSum) === GAME_BOARD_SIZE) state = rowSum;
+        if (Math.abs(colSum) === GAME_BOARD_SIZE) state = colSum;
     }
 
-    for (let col = 0; col < GAME_BOARD_SIZE; col++) {
-        for (let row = 0; row < GAME_BOARD_SIZE; row++) {
-            sum += gameboard[row][col];
-            if (gameboard[row][col] === 0) {
-                isDraw = false;
-            }
-        }
-     
-        if (Math.abs(sum) == 3) {
-            state = sum;
-        }
-        sum = 0;
-    }
-
+    let mainDiagonalSum = 0, antiDiagonalSum = 0;
     for (let i = 0; i < GAME_BOARD_SIZE; i++) {
-        sum += gameboard[i][i];
-        if (gameboard[i][i] === 0) {
+        mainDiagonalSum += gameboard[i][i];
+        antiDiagonalSum += gameboard[i][GAME_BOARD_SIZE - 1 - i];
+
+        if (gameboard[i][i] === 0 || gameboard[i][GAME_BOARD_SIZE - 1 - i] === 0) {
             isDraw = false;
         }
     }
-         if (Math.abs(sum) == 3) {
-            state = sum;
-        }
-        sum = 0;
 
-    for (let i = 0; i < GAME_BOARD_SIZE; i++) {
-        sum += gameboard[i][GAME_BOARD_SIZE - 1 - i];
-        if (gameboard[i][GAME_BOARD_SIZE - 1 - i] === 0) {
-            isDraw = false;
-        }
+    if (Math.abs(mainDiagonalSum) === GAME_BOARD_SIZE) state = mainDiagonalSum;
+    if (Math.abs(antiDiagonalSum) === GAME_BOARD_SIZE) state = antiDiagonalSum;
+
+    if (isDraw && state === 0) {
+        return -2;
     }
-        if (Math.abs(sum) == 3) {
-         state = sum;
-        }
 
-        if (isDraw && state === 0) {
-            return -2;
-        }
-
-    let draw = -2;
-    let winner = state / 3;
-    return winner;
+    return state / GAME_BOARD_SIZE;
 }
 
 function updateGameBoardState(move) {
